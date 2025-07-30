@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas de Alunos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            margin-bottom: 20px;
+        }
+        .aluno-form {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        input {
+            padding: 8px;
+            margin: 5px 0;
+        }
+        .resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Notas de Alunos</h1>
+    
+    <div class="container">
+        <label for="quantidadeAlunos">Quantos alunos teremos?</label>
+        <input type="number" id="quantidadeAlunos" min="1">
+        <button onclick="criarCamposAlunos()">Criar Campos</button>
+    </div>
+    
+    <div id="alunosContainer"></div>
+    
+    <button id="calcularButton" onclick="calcularMedias()" style="display: none;">Calcular Médias</button>
+    
+    <div id="resultado" class="resultado" style="display: none;">
+        <h2>Resultados</h2>
+        <div id="aprovados"></div>
+        <div id="reprovados"></div>
+    </div>
+    
+    <script>
+        let alunos = [];
+        
+        function criarCamposAlunos() {
+            const quantidade = parseInt(document.getElementById('quantidadeAlunos').value);
+            const container = document.getElementById('alunosContainer');
+            
+            if (isNaN(quantidade) || quantidade <= 0) {
+                alert('Por favor, insira um número válido de alunos.');
+                return;
+            }
+            
+            container.innerHTML = '';
+            alunos = [];
+            
+            for (let i = 0; i < quantidade; i++) {
+                const alunoDiv = document.createElement('div');
+                alunoDiv.className = 'aluno-form';
+                alunoDiv.innerHTML = `
+                    <h3>Aluno ${i + 1}</h3>
+                    <label for="nome${i}">Nome:</label>
+                    <input type="text" id="nome${i}" required>
+                    
+                    <label for="nota1_${i}">Nota 1:</label>
+                    <input type="number" id="nota1_${i}" min="0" max="10" step="0.1" required>
+                    
+                    <label for="nota2_${i}">Nota 2:</label>
+                    <input type="number" id="nota2_${i}" min="0" max="10" step="0.1" required>
+                    
+                    <label for="nota3_${i}">Nota 3:</label>
+                    <input type="number" id="nota3_${i}" min="0" max="10" step="0.1" required>
+                `;
+                container.appendChild(alunoDiv);
+            }
+            
+            document.getElementById('calcularButton').style.display = 'block';
+        }
+        
+        function calcularMedias() {
+            const quantidade = parseInt(document.getElementById('quantidadeAlunos').value);
+            alunos = [];
+            
+            for (let i = 0; i < quantidade; i++) {
+                const nome = document.getElementById(`nome${i}`).value;
+                const nota1 = parseFloat(document.getElementById(`nota1_${i}`).value);
+                const nota2 = parseFloat(document.getElementById(`nota2_${i}`).value);
+                const nota3 = parseFloat(document.getElementById(`nota3_${i}`).value);
+                
+                if (!nome || isNaN(nota1) || isNaN(nota2) || isNaN(nota3)) {
+                    alert('Por favor, preencha todos os campos corretamente.');
+                    return;
+                }
+                
+                const media = ((nota1 + nota2 + nota3) / 3).toFixed(2);
+                
+                alunos.push({
+                    nome: nome,
+                    nota1: nota1,
+                    nota2: nota2,
+                    nota3: nota3,
+                    media: parseFloat(media)
+                });
+            }
+            
+            exibirResultados();
+        }
+        
+        function exibirResultados() {
+            const aprovadosDiv = document.getElementById('aprovados');
+            const reprovadosDiv = document.getElementById('reprovados');
+            
+            aprovadosDiv.innerHTML = '<h3>Aprovados (Média ≥ 7):</h3>';
+            reprovadosDiv.innerHTML = '<h3>Reprovados (Média < 7):</h3>';
+            
+            const aprovados = alunos.filter(aluno => aluno.media >= 7);
+            const reprovados = alunos.filter(aluno => aluno.media < 7);
+            
+            if (aprovados.length > 0) {
+                aprovados.forEach(aluno => {
+                    aprovadosDiv.innerHTML += `<p>${aluno.nome} - Média: ${aluno.media}</p>`;
+                });
+            } else {
+                aprovadosDiv.innerHTML += '<p>Nenhum aluno aprovado.</p>';
+            }
+            
+            if (reprovados.length > 0) {
+                reprovados.forEach(aluno => {
+                    reprovadosDiv.innerHTML += `<p>${aluno.nome} - Média: ${aluno.media}</p>`;
+                });
+            } else {
+                reprovadosDiv.innerHTML += '<p>Nenhum aluno reprovado.</p>';
+            }
+            
+            document.getElementById('resultado').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
