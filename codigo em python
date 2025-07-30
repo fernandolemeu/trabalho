@@ -1,0 +1,69 @@
+def main():
+    alunos = []
+    
+    # Solicitar o número de alunos
+    while True:
+        try:
+            quantidade = int(input("Quantos alunos teremos? "))
+            if quantidade <= 0:
+                print("Por favor, digite um número maior que zero.")
+                continue
+            break
+        except ValueError:
+            print("Por favor, digite um número válido.")
+    
+    # Coletar dados dos alunos
+    for i in range(quantidade):
+        print(f"\nAluno {i + 1}:")
+        nome = input("Nome: ")
+        
+        # Validar as notas
+        while True:
+            try:
+                nota1 = float(input("Nota 1: "))
+                nota2 = float(input("Nota 2: "))
+                nota3 = float(input("Nota 3: "))
+                
+                if not (0 <= nota1 <= 10 and 0 <= nota2 <= 10 and 0 <= nota3 <= 10):
+                    print("As notas devem estar entre 0 e 10.")
+                    continue
+                    
+                break
+            except ValueError:
+                print("Por favor, digite notas válidas.")
+        
+        # Calcular média
+        media = (nota1 + nota2 + nota3) / 3
+        
+        # Armazenar os dados do aluno
+        alunos.append({
+            'nome': nome,
+            'nota1': nota1,
+            'nota2': nota2,
+            'nota3': nota3,
+            'media': media
+        })
+    
+    # Separar aprovados e reprovados
+    aprovados = [aluno for aluno in alunos if aluno['media'] >= 7]
+    reprovados = [aluno for aluno in alunos if aluno['media'] < 7]
+    
+    # Exibir resultados
+    print("\n=== RESULTADOS ===")
+    
+    print("\nAprovados (Média ≥ 7):")
+    if aprovados:
+        for aluno in aprovados:
+            print(f"{aluno['nome']} - Média: {aluno['media']:.2f}")
+    else:
+        print("Nenhum aluno aprovado.")
+    
+    print("\nReprovados (Média < 7):")
+    if reprovados:
+        for aluno in reprovados:
+            print(f"{aluno['nome']} - Média: {aluno['media']:.2f}")
+    else:
+        print("Nenhum aluno reprovado.")
+
+if __name__ == "__main__":
+    main()
